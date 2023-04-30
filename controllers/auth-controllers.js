@@ -76,7 +76,7 @@ const getAllLoginInfo = async (req, res) => {
       }
 
       groups[lowerCaseName].count++;
-      groups[lowerCaseName].dates.push(date);
+      groups[lowerCaseName].dates.unshift(date);
 
       return groups;
     }, {});
