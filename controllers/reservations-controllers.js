@@ -13,18 +13,12 @@ const getAllReservations = async (req, res) => {
 };
 
 const addReservation = async (req, res) => {
+  const user = req.user;
   const number = req.body.number;
   const bookedDate = req.body.bookedDate;
   const person = req.body.person;
-  const modificationUser = req.body.modificationUser;
   const price = req.body.price;
-  if (
-    !number ||
-    !bookedDate ||
-    !person ||
-    !modificationUser ||
-    !price === undefined
-  ) {
+  if (!number || !bookedDate || !person || price === undefined) {
     return res.status(400).json({ message: "more info is required" });
   }
   const duplicate = await Reservation.findOne({ number, bookedDate }).exec();
@@ -32,7 +26,10 @@ const addReservation = async (req, res) => {
     return res.sendStatus(409);
   }
   try {
-    const result = await Reservation.create(req.body);
+    const result = await Reservation.create({
+      ...req.body,
+      createdBy: user,
+    });
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -57,6 +54,7 @@ const getOneReservation = async (req, res) => {
 };
 
 const updateReservation = async (req, res) => {
+  const user = req.user;
   const number = req.params.number;
   const bookedDate = req.params.date;
   const response = req.body;
@@ -66,7 +64,7 @@ const updateReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findOneAndUpdate(
       { number, bookedDate },
-      response,
+      { ...response, updatedBy: user },
       {
         new: true,
         runValidators: true,

@@ -13,14 +13,15 @@ const getAllExpenses = async (req, res) => {
 };
 
 const addExpense = async (req, res) => {
+  const user = req.user;
   const title = req.body.title;
   const date = req.body.date;
   const price = req.body.price;
-  if (!title || !date || !price === undefined) {
+  if (!title || !date || price === undefined) {
     return res.status(400).json({ message: "more info is required" });
   }
   try {
-    const result = await Expense.create(req.body);
+    const result = await Expense.create({ ...req.body, createdBy: user });
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -41,12 +42,17 @@ const getOneExpense = async (req, res) => {
 };
 
 const updateExpense = async (req, res) => {
+  const user = req.user;
   const _id = req.params.id;
   try {
-    const expense = await Expense.findOneAndUpdate({ _id }, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const expense = await Expense.findOneAndUpdate(
+      { _id },
+      { ...req.body, updatedBy: user },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!expense) {
       return res.status(404).send(`no expense found`);
     }
