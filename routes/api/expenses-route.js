@@ -22,7 +22,7 @@ router
   );
 router
   .route("/:id")
-  .get(verifyJWT, verifyRoles(ROLES_LIST.user), getOneExpense)
+  .get(verifyJWT, verifyRoles(ROLES_LIST.admin), getOneExpense)
   .patch(verifyJWT, verifyRoles(ROLES_LIST.admin), updateExpense)
   .delete(verifyJWT, verifyRoles(ROLES_LIST.admin), deleteExpense);
 

@@ -1,12 +1,25 @@
 const Expense = require("../models/expense-model");
 
 const getAllExpenses = async (req, res) => {
+  const roles = req.roles;
+  let sentExpenses = [];
   try {
     const expenses = await Expense.find();
     if (!expenses) {
       return res.status(204).json({ message: "no expenses found" });
     }
-    res.status(200).json({ expenses });
+    if (roles.includes(5150)) {
+      sentExpenses = expenses;
+    } else {
+      expenses.forEach((e) => {
+        sentExpenses.push({
+          title: e.title,
+          date: e.date,
+          price: e.price,
+        });
+      });
+    }
+    res.status(200).json({ expenses: sentExpenses });
   } catch (error) {
     res.status(500).json(error);
   }

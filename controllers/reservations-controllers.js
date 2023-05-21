@@ -2,11 +2,25 @@ const Reservation = require("../models/reservation-model");
 
 const getAllReservations = async (req, res) => {
   try {
+    const roles = req.roles;
+    let sentReservations = [];
     const reservations = await Reservation.find();
     if (!reservations) {
       return res.status(204).json({ message: "no reservations found" });
     }
-    res.status(200).json({ reservations });
+    if (roles.includes(5150) || roles.includes(2001)) {
+      sentReservations = reservations;
+    } else {
+      reservations.forEach((r) => {
+        sentReservations.push({
+          number: r.number,
+          bookedDate: r.bookedDate,
+          person: { name: r.person.name },
+          price: r.price,
+        });
+      });
+    }
+    res.status(200).json({ reservations: sentReservations });
   } catch (error) {
     res.status(500).json(error);
   }

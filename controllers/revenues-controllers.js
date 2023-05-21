@@ -2,11 +2,24 @@ const Revenue = require("../models/revenue-model");
 
 const getAllRevenues = async (req, res) => {
   try {
+    const roles = req.roles;
+    let sentRevenues = [];
     const revenues = await Revenue.find();
     if (!revenues) {
       return res.status(204).json({ message: "no revenues found" });
     }
-    res.status(200).json({ revenues });
+    if (roles.includes(5150)) {
+      sentRevenues = revenues;
+    } else {
+      revenues.forEach((r) => {
+        sentRevenues.push({
+          title: r.title,
+          date: r.date,
+          price: r.price,
+        });
+      });
+    }
+    res.status(200).json({ revenues: sentRevenues });
   } catch (error) {
     res.status(500).json(error);
   }

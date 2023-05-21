@@ -22,7 +22,11 @@ router
   );
 router
   .route("/:id")
-  .get(verifyJWT, verifyRoles(ROLES_LIST.user), getOneReservation)
+  .get(
+    verifyJWT,
+    verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor),
+    getOneReservation
+  )
   .patch(
     verifyJWT,
     verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor),
