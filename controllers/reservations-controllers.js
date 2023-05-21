@@ -38,11 +38,9 @@ const addReservation = async (req, res) => {
 
 const getOneReservation = async (req, res) => {
   try {
-    const number = req.params.number;
-    const bookedDate = req.params.date;
+    const id = req.params.id;
     const reservation = await Reservation.findOne({
-      number,
-      bookedDate,
+      _id: id,
     }).exec();
     if (!reservation) {
       return res.status(404).send(`no reservation found`);
@@ -55,15 +53,14 @@ const getOneReservation = async (req, res) => {
 
 const updateReservation = async (req, res) => {
   const user = req.user;
-  const number = req.params.number;
-  const bookedDate = req.params.date;
+  const id = req.params.id;
   const response = req.body;
   if (response.bookedDate) {
     delete response.bookedDate;
   }
   try {
     const reservation = await Reservation.findOneAndUpdate(
-      { number, bookedDate },
+      { _id: id },
       { ...response, updatedBy: user },
       {
         new: true,
@@ -81,11 +78,9 @@ const updateReservation = async (req, res) => {
 
 const deleteReservation = async (req, res) => {
   try {
-    const number = req.params.number;
-    const bookedDate = req.params.date;
+    const id = req.params.id;
     const reservation = await Reservation.findOneAndDelete({
-      number,
-      bookedDate,
+      _id: id,
     });
     if (!reservation) {
       return res.status(404).send(`no reservation found`);

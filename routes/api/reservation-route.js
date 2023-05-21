@@ -21,7 +21,7 @@ router
     addReservation
   );
 router
-  .route("/:number/date/:date")
+  .route("/:id")
   .get(verifyJWT, verifyRoles(ROLES_LIST.user), getOneReservation)
   .patch(
     verifyJWT,
